@@ -1,10 +1,15 @@
-FROM php:8.2-cli
+FROM php:7.4-fpm
 LABEL maintainer="Jaivic"
 
-RUN apt-get update && apt-get -y install zlib1g-dev libicu-dev libxml2-dev libpq-dev vim \
-        && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
-        #&& docker-php-ext-install pdo pdo_mysql pdo_pgsql zip intl xmlrpc soap opcache \
-        #&& docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd 
+RUN apt-get update
+RUN apt-get install -y libpq-dev
+RUN apt-get install -y zlib1g-dev libzip-dev libpng-dev
+RUN apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libgd-dev
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
+RUN docker-php-ext-configure gd --with-jpeg=/usr/include/ --with-freetype=/usr/include/
+RUN docker-php-ext-install gd
+RUN docker-php-ext-install zip
+RUN docker-php-ext-install mysqli pdo pdo_mysql pdo_pgsql
 
 COPY  . /var/www/html/
 WORKDIR /var/www/html/
